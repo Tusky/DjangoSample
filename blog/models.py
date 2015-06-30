@@ -10,4 +10,7 @@ class Post(models.Model):
     posted_on = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return _('%s. %s by %s') % (self.posted_on, self.title, self.posted_by.get_full_name())
+        return _('%s by %s') % (self.title, self.posted_by.get_full_name())
+
+    class Meta:
+        ordering = ['-posted_on']
