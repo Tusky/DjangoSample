@@ -1,17 +1,17 @@
-{% load i18n %}
+{% load i18n humanize %}
 
 {% if multiple %}
-    <h2><a href="{% url 'blog:detail' object.pk %}">{{ object.title }}</a></h2>
+    <h2><a href="{% url 'blog:detail' object.slug %}">{{ object.title }}</a></h2>
 {% else %}
     <h2>{{ object.title }}</h2>
 {% endif %}
 
 <p class="lead"> by <a href="#">{{ object.posted_by.get_full_name }}</a></p>
-<p><span class="glyphicon glyphicon-time"></span> Posted on {{ object.posted_on|date:'F m j' }}</p>
+<p><span class="glyphicon glyphicon-time"></span> Posted {{ object.posted_on|naturaltime }}</p>
 <hr>
 {% if multiple %}
     <p>{{ object.content|truncatewords_html:50 }}</p>
-    <a class="btn btn-primary" href="{% url 'blog:detail' object.pk %}">{% trans 'Read More' %} <span class="glyphicon glyphicon-chevron-right"></span></a>
+    <a class="btn btn-primary btn-xs" href="{% url 'blog:detail' object.slug %}">{% trans 'Read More' %} <span class="glyphicon glyphicon-chevron-right"></span></a>
 {% else %}
     <p>{{ object.content }}</p>
 {% endif %}

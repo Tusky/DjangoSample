@@ -48,6 +48,34 @@
             <div class="row">
                 {% block content %}{% endblock %}
                 <div class="col-md-4">
+                    <div class="well">
+                        <h4>{% trans 'Blog Search' %}</h4>
+
+                        <form method="get" action="{% url 'blog:search' %}">
+                            <div class="input-group">
+                                <input type="search" name="q" class="form-control">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="well">
+                        <h4>{% trans 'Blog Categories' %}</h4>
+                        <div class="row">
+                            <ul class="list-unstyled">
+                                {% for category in categories %}
+                                    <li class="col-lg-6">
+                                        <a href="{% url 'blog:category' category.slug %}">{{ category.name }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <!-- /.col-lg-6 -->
+                        </div>
+                        <!-- /.row -->
+                    </div>
                     <!-- Side Widget Well -->
                     <div class="well">
                         <h4>SampleBlog</h4>
