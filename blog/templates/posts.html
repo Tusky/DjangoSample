@@ -12,6 +12,8 @@
             {% if not forloop.last %}
                 <hr>
             {% endif %}
+        {% empty %}
+            {% trans 'No post could be found.' %}
         {% endfor %}
         <!-- Pager -->
         {% if is_paginated %}

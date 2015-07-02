@@ -3,11 +3,10 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
 from blog.models import Post, Category
 
-
 class BlogTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.blogger = User.objects.create(username='blogger', password='blogger')
+        self.blogger = User.objects.create_superuser(username='blogger', password='blogger', email='a@a.com')
         self.client.login(username='blogger', password='blogger')
         self.category = Category.objects.create(name='Category', slug='category')
         for i in range(10):
@@ -48,9 +47,37 @@ class BlogTest(TestCase):
         r = self.client.get('%s?q=Epic Title 9' % reverse('blog:search'))
         self.assertContains(r, 'Epic title 9', 2)
 
-    # Test if search page loads up, has every content
+    # Test if category filter page loads up, has every content
     def test_if_category_page_loads(self):
         post = Post.objects.latest('pk')
         post.categories.add(self.category)
-        r = self.client.get(reverse('blog:category', kwargs={'slug': self.category.slug}))
+        r = self.client.get(reverse('blog:filter', kwargs={'type': 'category', 'slug': self.category.slug}))
         self.assertContains(r, 'Epic title 9', 2)
+
+    # Test if user filter page loads up, has every content
+    def test_if_user_filter_page_loads(self):
+        new_blogger = User.objects.create(username='teszt_elek', password='teszt_elek')
+        post = Post.objects.latest('pk')
+        post.posted_by=new_blogger
+        post.save()
+        r = self.client.get(reverse('blog:filter', kwargs={'type': 'user', 'slug': new_blogger.username}))
+        self.assertContains(r, post.title, 2)
+
+    def test_admin_features(self):
+        data = {
+            'action': 'mark_unpublished',
+            '_selected_action': [post.pk for post in Post.objects.all()]
+        }
+        self.client.post(reverse('admin:blog_post_changelist'), data=data)
+        self.assertEqual(Post.objects.filter(active=True).count(), 0)
+        self.assertEqual(Post.objects.filter(active=False).count(), 10)
+
+        data = {
+            'action': 'mark_published',
+            '_selected_action': [post.pk for post in Post.objects.all()]
+        }
+        self.client.post(reverse('admin:blog_post_changelist'), data=data)
+        self.assertEqual(Post.objects.filter(active=False).count(), 0)
+        self.assertEqual(Post.objects.filter(active=True).count(), 10)
+
+

@@ -55,7 +55,7 @@
                             <div class="input-group">
                                 <input type="search" name="q" class="form-control">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button">
+                                    <button class="btn btn-default" type="submit">
                                         <span class="glyphicon glyphicon-search"></span>
                                     </button>
                                 </span>
@@ -68,7 +68,7 @@
                             <ul class="list-unstyled">
                                 {% for category in categories %}
                                     <li class="col-lg-6">
-                                        <a href="{% url 'blog:category' category.slug %}">{{ category.name }}</a>
+                                        <a href="{% url 'blog:filter' 'category' category.slug %}">{{ category.name }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
