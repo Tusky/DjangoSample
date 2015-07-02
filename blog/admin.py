@@ -1,5 +1,6 @@
 from django.contrib import admin
-from blog.models import Post, Category
+from blog.models import Post, Category, Comment
+
 
 def mark_published(admin, request, queryset):
     queryset.update(active=True)
@@ -18,5 +19,9 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     list_display = ['pk', 'name']
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['posted_by', 'text']
+
 admin.site.register(Post, PostAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(Comment, CommentAdmin)

@@ -1,7 +1,14 @@
-from django.db.models import Q
-from django.views.generic import ListView, DetailView
+from django.contrib import messages
 
-from blog.models import Post
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.http import Http404
+from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.generic import ListView, DetailView, CreateView
+
+from blog.models import Post, Comment
 
 
 class Posts(ListView):
@@ -34,3 +41,29 @@ class SinglePost(DetailView):
 
     def get_queryset(self):
         return self.model.objects.for_display()
+
+
+class PostComment(CreateView):
+    """
+    Saves comments received to a post. Removed ability to GET the page.
+    """
+    model = Comment
+    fields = ['text']
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(PostComment, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        raise Http404
+
+    def form_valid(self, form):
+        comment = form.save(commit=False)
+        comment.posted_by = self.request.user
+        comment.post = get_object_or_404(Post, slug=self.kwargs['slug'])
+        comment.save()
+        messages.success(self.request, 'Your comment was posted.')
+        return super(PostComment, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('blog:detail', kwargs={'slug': self.kwargs['slug']})
