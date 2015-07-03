@@ -29,12 +29,24 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        <li class="active">
+                        <li{% if not current_page %} class="active"{% endif %}>
                             <a href="{% url 'blog:list' %}">{% trans 'Blog' %}</a>
                         </li>
-                        {% if user.is_staff %}
+                        {% if user.is_authenticated %}
+                            {% if user.is_staff %}
+                                <li>
+                                    <a href="{% url 'admin:index' %}">{% trans 'Admin' %}</a>
+                                </li>
+                            {% endif %}
                             <li>
-                                <a href="{% url 'admin:index' %}">{% trans 'Admin' %}</a>
+                                <a href="{% url 'blog:logout' %}">{% trans 'Logout' %}</a>
+                            </li>
+                        {% else %}
+                            <li{% ifequal current_page 'login' %} class="active"{% endifequal %}>
+                                <a href="{% url 'blog:login' %}">{% trans 'Login' %}</a>
+                            </li>
+                            <li{% ifequal current_page 'register' %} class="active"{% endifequal %}>
+                                <a href="{% url 'blog:register' %}">{% trans 'Register' %}</a>
                             </li>
                         {% endif %}
                     </ul>

@@ -139,3 +139,35 @@ class BlogTest(TestCase):
         }
         r = self.client.post(reverse('blog:login'), data=data2)
         self.assertRedirects(r, reverse('blog:list'))
+
+    # Test user logout
+    def test_user_logout(self):
+        self.assertIsNotNone(self.client.session.get('_auth_user_id', None))
+        self.client.get(reverse('blog:logout'))
+        self.assertIsNone(self.client.session.get('_auth_user_id', None))
+
+    # Test user registration
+    def test_user_registration(self):
+        self.assertEqual(User.objects.count(), 1)
+        self.client.logout()
+
+        # Incorrect test case
+        data = {
+            'username': '',
+            'password': '',
+            'first_name': '',
+            'last_name': '',
+        }
+        self.client.post(reverse('blog:register'), data=data)
+        self.assertEqual(User.objects.count(), 1)
+
+        # Correct test case
+        data = {
+            'username': 'blogger2',
+            'password': 'blogger2',
+            'first_name': 'blogger2',
+            'last_name': 'blogger2',
+        }
+        r = self.client.post(reverse('blog:register'), data=data)
+        self.assertRedirects(r, reverse('blog:login'))
+        self.assertEqual(User.objects.count(), 2)
