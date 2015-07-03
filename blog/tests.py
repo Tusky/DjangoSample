@@ -1,12 +1,20 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.test import TestCase, Client
-from blog.models import Post, Category
+
+from blog.models import Post, Category, Comment
+
 
 class BlogTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.blogger = User.objects.create_superuser(username='blogger', password='blogger', email='a@a.com')
+        self.blogger = User.objects.create_superuser(
+            username='blogger',
+            password='blogger',
+            email='a@a.com',
+            first_name='Epic',
+            last_name='Blogger'
+        )
         self.client.login(username='blogger', password='blogger')
         self.category = Category.objects.create(name='Category', slug='category')
         for i in range(10):
@@ -40,7 +48,7 @@ class BlogTest(TestCase):
     def test_if_blog_detail_page_loads(self):
         post = Post.objects.latest('pk')
         r = self.client.get(reverse('blog:detail', kwargs={'slug': post.slug}))
-        self.assertContains(r, 'Epic title 9', 2)
+        self.assertContains(r, post.title, 2)
 
     # Test if search page loads up, has every content
     def test_if_search_page_loads(self):
@@ -52,17 +60,18 @@ class BlogTest(TestCase):
         post = Post.objects.latest('pk')
         post.categories.add(self.category)
         r = self.client.get(reverse('blog:filter', kwargs={'type': 'category', 'slug': self.category.slug}))
-        self.assertContains(r, 'Epic title 9', 2)
+        self.assertContains(r, post.title, 2)
 
     # Test if user filter page loads up, has every content
     def test_if_user_filter_page_loads(self):
         new_blogger = User.objects.create(username='teszt_elek', password='teszt_elek')
         post = Post.objects.latest('pk')
-        post.posted_by=new_blogger
+        post.posted_by = new_blogger
         post.save()
         r = self.client.get(reverse('blog:filter', kwargs={'type': 'user', 'slug': new_blogger.username}))
         self.assertContains(r, post.title, 2)
 
+    # Test admin actions for that sweet 100% coverage
     def test_admin_features(self):
         data = {
             'action': 'mark_unpublished',
@@ -80,4 +89,53 @@ class BlogTest(TestCase):
         self.assertEqual(Post.objects.filter(active=False).count(), 0)
         self.assertEqual(Post.objects.filter(active=True).count(), 10)
 
+    # Test listing comments
+    def test_listing_comments(self):
+        commenter = User.objects.create(username='teszt_elek', password='teszt_elek', first_name='Elek',
+                                        last_name='Teszt')
+        post = Post.objects.latest('pk')
+        Comment.objects.create(text='New Comment', posted_by=commenter, post=post)
+        r = self.client.get(reverse('blog:detail', kwargs={'slug': post.slug}))
+        self.assertContains(r, post.title, 2)
+        self.assertContains(r, 'New Comment', 1)
+        self.assertContains(r, commenter.get_full_name(), 1)
 
+    # Test posting a comment
+    def test_comment_posting(self):
+        post = Post.objects.latest('pk')
+        r = self.client.get(reverse('blog:add-comment', kwargs={'slug': post.slug}))
+        self.assertRedirects(r, reverse('blog:detail', kwargs={'slug': post.slug}))
+
+        data = {'text': 'New Comment'}
+        r = self.client.post(reverse('blog:add-comment', kwargs={'slug': post.slug}), data=data, follow=True)
+        self.assertContains(r, post.title, 2)
+        self.assertContains(r, 'New Comment', 1)
+        self.assertContains(r, self.blogger.get_full_name(), 2)
+
+    # Test posting a comment without login
+    def test_comment_posting_without_login(self):
+        self.client.logout()
+        post = Post.objects.latest('pk')
+        data = {'text': 'New Comment'}
+        r = self.client.post(reverse('blog:add-comment', kwargs={'slug': post.slug}), data=data)
+        self.assertRedirects(r, '%s?next=/post/%s/add_comment/' % (reverse('blog:login'), post.slug))
+
+    # Test user login
+    def test_user_login(self):
+        self.client.logout()
+        # Incorrect test case
+        data = {
+            'username': 'Incorrect',
+            'password': 'Incorrect'
+        }
+        r = self.client.post(reverse('blog:login'), data=data)
+        self.assertContains(r, 'Please enter a correct username and password. '
+                               'Note that both fields may be case-sensitive.')
+
+        # Correct test case
+        data2 = {
+            'username': 'blogger',
+            'password': 'blogger'
+        }
+        r = self.client.post(reverse('blog:login'), data=data2)
+        self.assertRedirects(r, reverse('blog:list'))

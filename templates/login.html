@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% load bootstrap3 %}
+{% block content %}
+    <div class="col-md-8">
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% bootstrap_form form %} {% bootstrap_button 'Send' 'submit' %}
+        </form>
+    </div>
+{% endblock %}

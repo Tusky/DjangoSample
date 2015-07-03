@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'bootstrap3',
     'blog'
 )
 
@@ -44,7 +45,7 @@ MIDDLEWARE_CLASSES = (
 ######################################################################
 
 STATIC_URL = '/static/'
-
+LOGIN_URL = '/login/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )

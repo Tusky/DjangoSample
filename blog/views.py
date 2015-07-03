@@ -1,12 +1,14 @@
 from django.contrib import messages
+from django.contrib.auth import login
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 
 from blog.models import Post, Comment
 
@@ -55,7 +57,7 @@ class PostComment(CreateView):
         return super(PostComment, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        raise Http404
+        return HttpResponseRedirect(reverse('blog:detail', kwargs={'slug': self.kwargs['slug']}))
 
     def form_valid(self, form):
         comment = form.save(commit=False)
@@ -67,3 +69,19 @@ class PostComment(CreateView):
 
     def get_success_url(self):
         return reverse('blog:detail', kwargs={'slug': self.kwargs['slug']})
+
+class Login(FormView):
+    """
+    Logs in the user then redirects him back to home or back to the page he came from.
+    """
+    form_class = AuthenticationForm
+    template_name = 'login.html'
+
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+        return super(Login, self).form_valid(form)
+
+    def get_success_url(self):
+        next_url = self.request.GET.get('next', False)
+        redirect_to = reverse('blog:list') if not next_url else next_url
+        return redirect_to
