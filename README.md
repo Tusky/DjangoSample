@@ -26,3 +26,4 @@ Buzzwords used in the project:
 - Template inheritance
 - Custom django options used (Example: humanize)
 - CSRF Token usage
+- Third party package usage (django-bootstrap3)
