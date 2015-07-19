@@ -17,7 +17,7 @@ class BlogTest(TestCase):
         )
         self.client.login(username='blogger', password='blogger')
         self.category = Category.objects.create(name='Category', slug='category')
-        for i in range(10):
+        for i in range(1, 11):
             Post.objects.create(
                 title='Epic title %d' % i,
                 slug='epic-title-%d' % i,
@@ -36,11 +36,13 @@ class BlogTest(TestCase):
     # Test if blog list page loads up, has paginator in place
     def test_if_blog_list_page_loads(self):
         r = self.client.get(reverse('blog:list'))
+        print(r.context['object_list'])
         self.assertContains(r, 'Epic title 9', 2)
         self.assertContains(r, 'Epic title ', 10)
         self.assertContains(r, 'Older', 1)
 
         r = self.client.get('%s?page=2' % reverse('blog:list'))
+        print(r.context['object_list'])
         self.assertContains(r, 'Epic title 4', 2)
         self.assertContains(r, 'Newer', 1)
 
@@ -118,56 +120,4 @@ class BlogTest(TestCase):
         post = Post.objects.latest('pk')
         data = {'text': 'New Comment'}
         r = self.client.post(reverse('blog:add-comment', kwargs={'slug': post.slug}), data=data)
-        self.assertRedirects(r, '%s?next=/post/%s/add_comment/' % (reverse('blog:login'), post.slug))
-
-    # Test user login
-    def test_user_login(self):
-        self.client.logout()
-        # Incorrect test case
-        data = {
-            'username': 'Incorrect',
-            'password': 'Incorrect'
-        }
-        r = self.client.post(reverse('blog:login'), data=data)
-        self.assertContains(r, 'Please enter a correct username and password. '
-                               'Note that both fields may be case-sensitive.')
-
-        # Correct test case
-        data2 = {
-            'username': 'blogger',
-            'password': 'blogger'
-        }
-        r = self.client.post(reverse('blog:login'), data=data2)
-        self.assertRedirects(r, reverse('blog:list'))
-
-    # Test user logout
-    def test_user_logout(self):
-        self.assertIsNotNone(self.client.session.get('_auth_user_id', None))
-        self.client.get(reverse('blog:logout'))
-        self.assertIsNone(self.client.session.get('_auth_user_id', None))
-
-    # Test user registration
-    def test_user_registration(self):
-        self.assertEqual(User.objects.count(), 1)
-        self.client.logout()
-
-        # Incorrect test case
-        data = {
-            'username': '',
-            'password': '',
-            'first_name': '',
-            'last_name': '',
-        }
-        self.client.post(reverse('blog:register'), data=data)
-        self.assertEqual(User.objects.count(), 1)
-
-        # Correct test case
-        data = {
-            'username': 'blogger2',
-            'password': 'blogger2',
-            'first_name': 'blogger2',
-            'last_name': 'blogger2',
-        }
-        r = self.client.post(reverse('blog:register'), data=data)
-        self.assertRedirects(r, reverse('blog:login'))
-        self.assertEqual(User.objects.count(), 2)
+        self.assertRedirects(r, '%s?next=/post/%s/add_comment/' % (reverse('user:login'), post.slug))

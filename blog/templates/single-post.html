@@ -35,7 +35,7 @@
         </div>
     {% else %}
         <div class="well" id="comments">
-            {% url 'blog:login' as login_url %}
+            {% url 'user:login' as login_url %}
             <h4>{% blocktrans with login_url=login_url %} You must <a href="{{ login_url }}">login</a> before being able to comment. {% endblocktrans %}</h4>
         </div>
     {% endif %}

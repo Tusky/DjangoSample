@@ -39,14 +39,14 @@
                                 </li>
                             {% endif %}
                             <li>
-                                <a href="{% url 'blog:logout' %}">{% trans 'Logout' %}</a>
+                                <a href="{% url 'user:logout' %}">{% trans 'Logout' %}</a>
                             </li>
                         {% else %}
                             <li{% ifequal current_page 'login' %} class="active"{% endifequal %}>
-                                <a href="{% url 'blog:login' %}">{% trans 'Login' %}</a>
+                                <a href="{% url 'user:login' %}">{% trans 'Login' %}</a>
                             </li>
                             <li{% ifequal current_page 'register' %} class="active"{% endifequal %}>
-                                <a href="{% url 'blog:register' %}">{% trans 'Register' %}</a>
+                                <a href="{% url 'user:register' %}">{% trans 'Register' %}</a>
                             </li>
                         {% endif %}
                     </ul>
