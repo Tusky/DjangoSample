@@ -36,13 +36,11 @@ class BlogTest(TestCase):
     # Test if blog list page loads up, has paginator in place
     def test_if_blog_list_page_loads(self):
         r = self.client.get(reverse('blog:list'))
-        print(r.context['object_list'])
         self.assertContains(r, 'Epic title 9', 2)
         self.assertContains(r, 'Epic title ', 10)
         self.assertContains(r, 'Older', 1)
 
         r = self.client.get('%s?page=2' % reverse('blog:list'))
-        print(r.context['object_list'])
         self.assertContains(r, 'Epic title 4', 2)
         self.assertContains(r, 'Newer', 1)
 
