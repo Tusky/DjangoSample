@@ -27,3 +27,7 @@ Buzzwords used in the project:
 - Custom django options used (Example: humanize)
 - CSRF Token usage
 - Third party package usage (django-bootstrap3)
+
+# Contact information
+Website: http://www.hajdurichard.hu  
+Upwork profile: https://www.upwork.com/o/profiles/users/_~01bd1e72c2d085c61b/
