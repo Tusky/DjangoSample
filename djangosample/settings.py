@@ -16,19 +16,26 @@ ROOT_URLCONF = 'djangosample.urls'
 ######################################################################
 #                        APPLICATION CONFIG                          #
 ######################################################################
-
-INSTALLED_APPS = (
+DJANGO_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',
+    'django.contrib.humanize'
+)
+
+THIRD_PARTY_APPS = (
     'bootstrap3',
+)
+
+PROJECT_APPS = (
     'user',
     'blog'
 )
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

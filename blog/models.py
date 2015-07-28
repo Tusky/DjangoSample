@@ -34,7 +34,7 @@ class Post(models.Model):
         return _('%s by %s') % (self.title, self.posted_by.get_full_name())
 
     class Meta:
-        ordering = ['-posted_on']
+        ordering = ['-posted_on', '-pk']
 
 
 class Comment(models.Model):
