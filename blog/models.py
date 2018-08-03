@@ -24,7 +24,7 @@ class Post(models.Model):
     title = models.CharField(_('Title'), max_length=255)
     slug = models.SlugField(_('Slug'))
     content = models.TextField(_('Content'))
-    posted_by = models.ForeignKey(User, verbose_name=_('Posted by'))
+    posted_by = models.ForeignKey(User, verbose_name=_('Posted by'), on_delete=models.PROTECT)
     posted_on = models.DateTimeField(auto_now_add=True, verbose_name=_('Posted on'))
     categories = models.ManyToManyField(Category, verbose_name=_('Categories'), blank=True)
     active = models.BooleanField(_('Active'), default=False)
@@ -39,9 +39,9 @@ class Post(models.Model):
 
 class Comment(models.Model):
     text = models.TextField(_('Comment'))
-    posted_by = models.ForeignKey(User, verbose_name=_('Posted by'))
+    posted_by = models.ForeignKey(User, verbose_name=_('Posted by'), on_delete=models.PROTECT)
     posted_on = models.DateTimeField(auto_now_add=True)
-    post = models.ForeignKey(Post, verbose_name='Post', related_name='comments')
+    post = models.ForeignKey(Post, verbose_name='Post', related_name='comments', on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['-posted_on']

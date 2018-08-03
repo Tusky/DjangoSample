@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
 from django.conf import settings
+from django.db import models, migrations
 
 
 class Migration(migrations.Migration):
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='post',
             name='posted_by',
-            field=models.ForeignKey(verbose_name='Posted by', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(verbose_name='Posted by', to=settings.AUTH_USER_MODEL, on_delete=models.PROTECT),
         ),
         migrations.AlterField(
             model_name='post',

@@ -1,11 +1,13 @@
-from django.conf.urls import url
+from django.urls import path
 
 from blog.views import Posts, SinglePost, PostComment
 
+app_name = 'blog'
+
 urlpatterns = [
-    url(r'^search/$', Posts.as_view(), name="search"),
-    url(r'^post/(?P<slug>[\w-]+)/add_comment/$', PostComment.as_view(), name="add-comment"),
-    url(r'^post/(?P<slug>[\w-]+)/$', SinglePost.as_view(), name="detail"),
-    url(r'^(?P<type>\w+)/(?P<slug>[\w-]+)/$', Posts.as_view(), name="filter"),
-    url(r'$', Posts.as_view(), name="list"),
+    path('search/', Posts.as_view(), name="search"),
+    path('post/<str:slug>/add_comment/', PostComment.as_view(), name="add-comment"),
+    path('post/<str:slug>/', SinglePost.as_view(), name="detail"),
+    path('<str:type>/<str:slug>/', Posts.as_view(), name="filter"),
+    path('', Posts.as_view(), name="list"),
 ]

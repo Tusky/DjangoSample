@@ -5,11 +5,11 @@ import sys
 #                           BASE CONFIG                              #
 ######################################################################
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = '2l3!0taarhv*soj!9eh5_asvq2rg+3*god7-+@618n0vfn%v*5'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'not-so-secret-if-you-can-read-this')
 
-DEBUG = os.environ.get('DEBUG')
+DEBUG = os.environ.get('DEBUG', False) == 'True'
 TESTING = True if 'test' in sys.argv else False
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 WSGI_APPLICATION = 'djangosample.wsgi.application'
 ROOT_URLCONF = 'djangosample.urls'
 
@@ -27,7 +27,7 @@ DJANGO_APPS = (
 )
 
 THIRD_PARTY_APPS = (
-    'bootstrap3',
+    'bootstrap4',
 )
 
 PROJECT_APPS = (
@@ -37,16 +37,15 @@ PROJECT_APPS = (
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-)
+]
 
 ######################################################################
 #                       TEMPLATE CONFIGURATION                       #

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
 from django.conf import settings
+from django.db import models, migrations
 
 
 class Migration(migrations.Migration):
@@ -29,11 +29,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='comment',
             name='post',
-            field=models.ForeignKey(to='blog.Post', verbose_name='comments'),
+            field=models.ForeignKey(to='blog.Post', verbose_name='comments', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='comment',
             name='posted_by',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='Posted by'),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, verbose_name='Posted by', on_delete=models.PROTECT),
         ),
     ]
