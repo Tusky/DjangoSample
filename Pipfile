@@ -7,7 +7,7 @@ name = "pypi"
 python_version = "3.6"
 
 [packages]
-django = ">=2.1,<2.2"
+django = ">=2.1,<2.3"
 django-bootstrap4 = "*"
 
 [dev-packages]
